@@ -1,0 +1,42 @@
+﻿  main.cpp
+c:\workspace\realtimeanimation\inversekinematics\opengl_kinematics\animation\animation\src\main.cpp(25): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\workspace\realtimeanimation\inversekinematics\opengl_kinematics\animation\animation\src\main.cpp(26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+main.obj : error LNK2019: unresolved external symbol __imp_glewInit referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwInit referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwGetPrimaryMonitor referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwGetVideoMode referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwDefaultWindowHints referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwWindowHint referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwCreateWindow referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwWindowShouldClose referenced in function "void __cdecl loop(void)" (?loop@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwSetWindowPos referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwShowWindow referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwPollEvents referenced in function "void __cdecl loop(void)" (?loop@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwMakeContextCurrent referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwSwapBuffers referenced in function "void __cdecl loop(void)" (?loop@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol glfwSwapInterval referenced in function "void __cdecl init(void)" (?init@@YAXXZ)
+main.obj : error LNK2001: unresolved external symbol __imp___glewBindBuffer
+main.obj : error LNK2001: unresolved external symbol __imp___glewBufferData
+main.obj : error LNK2001: unresolved external symbol __imp___glewBufferSubData
+main.obj : error LNK2001: unresolved external symbol __imp___glewGenBuffers
+main.obj : error LNK2001: unresolved external symbol __imp___glewAttachShader
+main.obj : error LNK2001: unresolved external symbol __imp___glewCompileShader
+main.obj : error LNK2001: unresolved external symbol __imp___glewCreateProgram
+main.obj : error LNK2001: unresolved external symbol __imp___glewCreateShader
+main.obj : error LNK2001: unresolved external symbol __imp___glewEnableVertexAttribArray
+main.obj : error LNK2001: unresolved external symbol __imp___glewGetAttribLocation
+main.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramInfoLog
+main.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramiv
+main.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderInfoLog
+main.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderiv
+main.obj : error LNK2001: unresolved external symbol __imp___glewLinkProgram
+main.obj : error LNK2001: unresolved external symbol __imp___glewShaderSource
+main.obj : error LNK2001: unresolved external symbol __imp___glewUseProgram
+main.obj : error LNK2001: unresolved external symbol __imp___glewValidateProgram
+main.obj : error LNK2001: unresolved external symbol __imp___glewVertexAttribPointer
+main.obj : error LNK2001: unresolved external symbol __imp___glewBindVertexArray
+main.obj : error LNK2001: unresolved external symbol __imp___glewGenVertexArrays
+main.obj : error LNK2001: unresolved external symbol __imp_glewExperimental
+C:\Workspace\RealtimeAnimation\InverseKinematics\OpenGL_Kinematics\Animation\Dependencies\glfw\lib-vc2015\glfw3.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Workspace\RealtimeAnimation\InverseKinematics\OpenGL_Kinematics\Animation\Dependencies\glew\lib\Release\Win32\glew32.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Workspace\RealtimeAnimation\InverseKinematics\OpenGL_Kinematics\Animation\x64\Debug\Animation.exe : fatal error LNK1120: 36 unresolved externals
