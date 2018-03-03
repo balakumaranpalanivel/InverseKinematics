@@ -140,20 +140,20 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\shaders\simpleFragmentShader.txt" />
-    <Text Include="src\shaders\simpleVertexShader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\diffuse.ps" />
-    <None Include="src\shaders\diffuse.vs" />
+    <ClCompile Include="src\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Target.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\segment.frag" />
+    <None Include="src\shaders\segment.vs" />
+    <None Include="src\shaders\shader.frag" />
+    <None Include="src\shaders\shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -30,22 +30,9 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\shaders\simpleFragmentShader.txt">
-      <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="src\shaders\simpleVertexShader.txt">
-      <Filter>Shaders</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\diffuse.ps">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="src\shaders\diffuse.vs">
-      <Filter>Shaders</Filter>
-    </None>
+    <ClCompile Include="src\Target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -60,5 +47,22 @@
     <ClInclude Include="src\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\segment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\shaders\shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\shaders\segment.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="src\shaders\shader.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
