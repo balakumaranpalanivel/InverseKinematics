@@ -9,7 +9,7 @@ Chain::Chain(vector<glm::vec3> joints, CTarget *t)
 	for (int i = 0; i < lengths.size(); ++i)
 	{
 		mSegments.push_back(
-			CSegment(mJoints[i], mJoints[i + 1],
+			CSegment(joints[i], joints[i + 1],
 				lengths[i], directions[i]));
 		mTotalLength += lengths[i];
 	}
@@ -190,7 +190,7 @@ void Chain::CalculateLinks(vector<glm::vec3> joints, vector<float> *lengths,
 	mOrigin = *joints.begin();
 	mEnd = *(joints.end() - 1);
 
-	for (auto it = mJoints.begin(); it != mJoints.end() - 1; ++it)
+	for (auto it = joints.begin(); it != joints.end() - 1; ++it)
 	{
 		glm::vec3 current = *it;
 		glm::vec3 next = *(it + 1);

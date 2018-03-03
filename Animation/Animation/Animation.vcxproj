@@ -153,6 +153,7 @@
     <ClInclude Include="src\MultiChain.h" />
     <ClInclude Include="src\Segment.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Spline.h" />
     <ClInclude Include="src\Target.h" />
   </ItemGroup>
   <ItemGroup>

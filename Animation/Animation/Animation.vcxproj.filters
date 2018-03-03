@@ -68,6 +68,9 @@
     <ClInclude Include="src\MultiChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Spline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\segment.frag">

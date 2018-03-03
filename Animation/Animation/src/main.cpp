@@ -1,270 +1,261 @@
+// Std. Includes
+#include <string>
+#include <iostream>
+#include <cstring>
 
-//Some Windows Headers (For Time, IO, etc.)
-#include <windows.h>
-#include <mmsystem.h>
-
+// GLEW
 #include <GL/glew.h>
 
+// GLFW
 #include <GLFW/glfw3.h>
-#include <iostream>
 
-#include <string> 
-#include <fstream>
-#include <iostream>git s
-#include <sstream>
+// GL includes
+#include "Shader.h"
+#include "Camera.h"
+#include "Target.h"
+#include "Chain.h"
+#include "MultiChain.h"
 
+// GLM Mathemtics
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <Windows.h>
 
-#include "Shader.h"
-#include "Mesh.h"
-#include "Segment.h"
+#include "Spline.h"
 
-// Macro for indexing vertex buffer
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+// Properties
+GLuint screenWidth = 1200, screenHeight = 800;
 
-using namespace std;
+// Function prototypes
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void Do_Movement(CTarget * target);
+//void ProcessFrame(const Leap::Controller & controller, Target * target);
 
-int width = 800.0;
-int height = 600.0;
+// Camera
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+bool keys[1024];
+GLfloat lastX = 400, lastY = 300;
+bool firstMouse = true;
 
-// Shader Functions- click on + to expand
-#pragma region SHADER_FUNCTIONS
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
-bool LoadFile(const std::string& fileName, std::string& outShader)
+// The MAIN function, from here we start our application and run our Game loop
+int main()
 {
-	std::ifstream file(fileName);
-	if (!file.is_open())
-	{
-		std::cout << "Error Loading file: " << fileName << " - impossible to open file" << std::endl;
-		return false;
-	}
+	determine_control_points();
 
-	if (file.fail())
-	{
-		std::cout << "Error Loading file: " << fileName << std::endl;
-		return false;
-	}
+	char desired_model[1000];
+	cout << "1. Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
+	cin >> desired_model;
 
-	std::stringstream stream;
-	stream << file.rdbuf();
-	file.close();
+	cout << desired_model << endl;
 
-	outShader = stream.str();
-
-	return true;
-}
-
-void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
-{
-	// create a shader object
-	GLuint ShaderObj = glCreateShader(ShaderType);
-
-	if (ShaderObj == 0) {
-		fprintf(stderr, "Error creating shader type %d\n", ShaderType);
-		exit(0);
-	}
-	// Bind the source code to the shader, this happens before compilation
-	glShaderSource(ShaderObj, 1, (const GLchar**)&pShaderText, NULL);
-	// compile the shader and check for errors
-	glCompileShader(ShaderObj);
-	GLint success;
-	// check for shader related errors using glGetShaderiv
-	glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		GLchar InfoLog[1024];
-		glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
-		fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType, InfoLog);
-		exit(1);
-	}
-	// Attach the compiled shader object to the program object
-	glAttachShader(ShaderProgram, ShaderObj);
-}
-
-GLuint CompileShaders(const std::string& vsFilename, const std::string& psFilename)
-{
-	//Start the process of setting up our shaders by creating a program ID
-	//Note: we will link all the shaders together into this ID
-	GLuint shaderProgramID = glCreateProgram();
-	if (shaderProgramID == 0) {
-		fprintf(stderr, "Error creating shader program\n");
-		exit(1);
-	}
-
-	// Create two shader objects, one for the vertex, and one for the fragment shader
-	std::string vs, ps;
-	LoadFile(vsFilename, vs);
-	AddShader(shaderProgramID, vs.c_str(), GL_VERTEX_SHADER);
-	LoadFile(psFilename, ps);
-	AddShader(shaderProgramID, ps.c_str(), GL_FRAGMENT_SHADER);
-
-	GLint Success = 0;
-	GLchar ErrorLog[1024] = { 0 };
-
-	// After compiling all shader objects and attaching them to the program, we can finally link it
-	glLinkProgram(shaderProgramID);
-	// check for program related errors using glGetProgramiv
-	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &Success);
-	if (Success == 0) {
-		glGetProgramInfoLog(shaderProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
-		exit(1);
-	}
-
-	// program has been successfully linked but needs to be validated to check whether the program can execute given the current pipeline state
-	glValidateProgram(shaderProgramID);
-	// check for program related errors using glGetProgramiv
-	glGetProgramiv(shaderProgramID, GL_VALIDATE_STATUS, &Success);
-	if (!Success) {
-		glGetProgramInfoLog(shaderProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
-		exit(1);
-	}
-	// Finally, use the linked shader program
-	// Note: this program will stay in effect for all draw calls until you replace it with another or explicitly disable its use
-	glUseProgram(shaderProgramID);
-	return shaderProgramID;
-}
-#pragma endregion SHADER_FUNCTIONS
-
-// VBO Functions - click on + to expand
-#pragma region VBO_FUNCTIONS
-GLuint VAO, VBO;
-
-GLuint generateObjectBuffer(GLfloat vertices[], GLfloat colors[]) {
-	GLuint numVertices = 3;
-	// Genderate 1 generic buffer object, called VBO
-	glGenBuffers(1, &VBO);
-	// In OpenGL, we bind (make active) the handle to a target name and then execute commands on that target
-	// Buffer will contain an array of vertices 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// After binding, we now fill our object with data, everything in "Vertices" goes to the GPU
-	glBufferData(GL_ARRAY_BUFFER, numVertices * 7 * sizeof(GLfloat), NULL, GL_STATIC_DRAW);
-	// if you have more data besides vertices (e.g., vertex colours or normals), use glBufferSubData to tell the buffer when the vertices array ends and when the colors start
-	glBufferSubData(GL_ARRAY_BUFFER, 0, numVertices * 3 * sizeof(GLfloat), vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(GLfloat), numVertices * 4 * sizeof(GLfloat), colors);
-
-	// TODO for GLFW
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	
-	return VBO;
-}
-
-void linkCurrentBuffertoShader(GLuint shaderProgramID) {
-	GLuint numVertices = 3;
-	// find the location of the variables that we will be using in the shader program
-	GLuint positionID = glGetAttribLocation(shaderProgramID, "vPosition");
-	GLuint colorID = glGetAttribLocation(shaderProgramID, "vColor");
-	// Have to enable this
-	glEnableVertexAttribArray(positionID);
-	// Tell it where to find the position data in the currently active buffer (at index positionID)
-	glVertexAttribPointer(positionID, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	// Similarly, for the color data.
-	glEnableVertexAttribArray(colorID);
-	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(numVertices * 3 * sizeof(GLfloat)));
-}
-
-#pragma endregion VBO_FUNCTIONS
-
-
-void display()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	// NB: Make the call to draw the geometry in the currently activated vertex buffer. This is where the GPU starts to work!
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-GLFWwindow* window;
-const GLFWvidmode* videMode;
-
-void initScene()
-{
-	// Create 3 vertices that make up a triangle that fits on the viewport 
-	GLfloat vertices[] = { -1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f };
-	// Create a color array that identfies the colors of each vertex (format R, G, B, A)
-	GLfloat colors[] = { 0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f };
-
-	// Set up the shaders
-	GLuint shaderProgramID = CompileShaders("../Animation/src/shaders/diffuse.vs",
-		"../Animation/src/shaders/diffuse.ps");
-
-	// Put the vertices and colors into a vertex buffer object
-	generateObjectBuffer(vertices, colors);
-
-	// Link the current buffer to the shader
-	linkCurrentBuffertoShader(shaderProgramID);
-}
-
-void init()
-{
-
-	if (glfwInit() != GL_TRUE)
-	{
-		std::cout << "Failed to Initialise\n";
-		return;
-	}
-
-	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	// Init GLFW
+	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	window = glfwCreateWindow(width, height, "Raytracer Compute Shader", NULL, NULL);
-
-	videMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwSetWindowPos(window, (videMode->width - width)/2, (videMode->height - height)/2);
+	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "FABRIK", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	// Initialize GLEW
+	// Set the required callback functions
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+
+	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
-		return;
+		return 0;
 	}
+	// Define the viewport dimensions
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	glViewport(0, 0, width, height);
 
-	glfwSwapInterval(1);
-	glfwShowWindow(window);
+	// Setup some OpenGL options
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 
-	initScene();
+	// Load our model object
+	CTarget target(1.0f, 1.0f, 0);
+	//Target target2(2, 0, 0);
+	//Target target3(1, 1, 0);
 
-}
+	// Load joints
+	vector<glm::vec3> joints1;
+	for (int i = 0; i < 3; ++i) {
+		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		joints1.push_back(glm::vec3(0, r, 0));
+	}
+	Chain chain1(joints1, &target);
 
-void loop()
-{
-	while (glfwWindowShouldClose(window) == GL_FALSE)
+	vector<glm::vec3> joints2;
+	joints2.push_back(glm::vec3(0, 0.0f, 0));
+	joints2.push_back(glm::vec3(0, 1.0f, 0));
+	joints2.push_back(glm::vec3(0.0f, 2.0f, 0));
+	//joints2.push_back(glm::vec3(0.0f, 3.0f, 0));
+
+	Chain chain2(joints2, &target);
+	vector<glm::vec4> constarins;
+	constarins.push_back(glm::vec4(45.0f, 45.0f, 45.0f, 45.0f));
+	constarins.push_back(glm::vec4(35.0f, 55.0f, 40.0f, 44.0f));
+
+	chain2.SetConstraint(constarins);
+	chain2.please_constraint = true;
+
+	// Load our model object
+	CTarget target1(0, 1, 0);
+	//Target target2(0, 1, 0);
+	//target = target1;
+
+	vector<Chain*> vec;
+
+	CTarget target2(1, 0, 0);
+	Chain *shoulder = new Chain(glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), &target2, 1);
+	vec.push_back(shoulder);
+
+	CTarget target3(0.5, -1, 0);
+	Chain *bodyRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(0.5, -1, 0), &target3, 1);
+	vec.push_back(bodyRight);
+
+	CTarget target4(0, 0, 0);
+	Chain *bodyLeft = new Chain(glm::vec3(0.5, -1, 0), glm::vec3(0, 0, 0), &target4, 1);
+	vec.push_back(bodyLeft);
+
+	CTarget target5(0, 1, 1);
+	Chain *armLeft = new Chain(glm::vec3(0, 0, 0), glm::vec3(0, 1, 1), &target5, 2);
+	vec.push_back(armLeft);
+
+	CTarget target6(1, 1, 1);
+	target = target6;
+	Chain *armRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), &target, 2);
+	vector<glm::vec4> armRightConstrain;
+	armRightConstrain.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 90.0f));
+	armRightConstrain.push_back(glm::vec4(90.0f, 90.0f, 0.0f, 0.0f));
+	armRight->please_constraint = true;
+	armRight->SetConstraint(armRightConstrain);
+	vec.push_back(armRight);
+
+	//vec.push_back(new Chain(glm::vec3(0, 1, 0), glm::vec3(-1, 1.5, 0), &target2, 1));
+	MultiChain multichain(vec);
+
+	// Leap motion stuff
+	//Leap::Controller controller;
+	bool controller_msg_displayed = false;
+	bool isAnimate = false;
+
+	// Game loop
+	while (!glfwWindowShouldClose(window))
 	{
+		//if(controller.isConnected() && !controller_msg_displayed) {
+		//  cout << "Leap Motion is connected." << endl;
+		//  controller_msg_displayed = true;
+		//}
+
+		// Set frame time
+		GLfloat currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		// Check and call events
 		glfwPollEvents();
-		glViewport(0, 0, width, height);
-		display();
+
+		// Clear the colorbuffer
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		Do_Movement(&target);
+
+		if (points_to_travel.size() > 0 && isAnimate)
+		{
+			Sleep(30);
+			target.mPosition = points_to_travel[0];
+			points_to_travel.erase(points_to_travel.begin());
+		}
+
+		//if(controller.isConnected()) ProcessFrame(controller, &target);
+
+		// Transformation matrices
+		glm::mat4 projection = glm::perspective(camera.Zoom, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+
+		glm::mat4 view = camera.GetViewMatrix();
+		target.Render(view, projection);
+
+		if (strcmp(desired_model, "1") == 0) {
+			chain1.Solve();
+			chain1.Render(view, projection);
+		}
+		else if (strcmp(desired_model, "2") == 0) {
+			multichain.Solve();
+			multichain.Render(view, projection);
+			target2.Render(view, projection);
+			target3.Render(view, projection);
+		}
+		else if (strcmp(desired_model, "3") == 0) {
+			chain2.Solve();
+			chain2.Render(view, projection);
+		}
+		else {
+			cout << "Invalid chain model" << endl;
+			break;
+		}
+
+		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
+
+	glfwTerminate();
+	return 0;
 }
 
-int main(int argc, char** argv){
-	
-	init();
+#pragma region "User input"
 
-	loop();
+// Moves/alters the target position based on user input
+void Do_Movement(CTarget * target)
+{
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
+		target->ProcessTranslation(FORWARD, deltaTime);
+	else if (keys[GLFW_KEY_UP])
+		target->ProcessTranslation(UP, deltaTime);
 
-    return 0;
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_DOWN])
+		target->ProcessTranslation(BACKWARD, deltaTime);
+	else if (keys[GLFW_KEY_DOWN])
+		target->ProcessTranslation(DOWN, deltaTime);
+
+	if (keys[GLFW_KEY_LEFT])
+		target->ProcessTranslation(LEFT, deltaTime);
+	if (keys[GLFW_KEY_RIGHT])
+		target->ProcessTranslation(RIGHT, deltaTime);
 }
 
+// Is called whenever a key is pressed/released via GLFW
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
+}
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		fprintf(stderr, "Click\n");
+	}
+}
 
-
-
-
-
-
-
+#pragma endregion
 
