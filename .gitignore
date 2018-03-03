@@ -31,7 +31,7 @@
 
 # Local Directory
 Animation/Debug/
-Animation/Raytracer/Debug
+Animation/Animation/Debug/
 Animation/Release/
-Animation/Raytracer/Release
+Animation/Animation/Release/
 Animation/.vs
