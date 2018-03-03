@@ -19,6 +19,7 @@
 
 #include "Shader.h"
 #include "Mesh.h"
+#include "Segment.h"
 
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
