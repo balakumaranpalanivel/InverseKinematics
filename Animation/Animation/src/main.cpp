@@ -30,7 +30,7 @@ GLuint screenWidth = 1200, screenHeight = 800;
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void Do_Movement(CTarget * target);
+void Do_Movement(Target * target);
 //void ProcessFrame(const Leap::Controller & controller, Target * target);
 
 // Camera
@@ -48,7 +48,7 @@ int main()
 	determine_control_points();
 
 	char desired_model[1000];
-	cout << "1. Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
+	cout << "1: Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
 	cin >> desired_model;
 
 	cout << desired_model << endl;
@@ -85,7 +85,7 @@ int main()
 	glEnable(GL_MULTISAMPLE);
 
 	// Load our model object
-	CTarget target(1.0f, 1.0f, 0);
+	Target target(1.0f, 1.0f, 0);
 	//Target target2(2, 0, 0);
 	//Target target3(1, 1, 0);
 
@@ -112,36 +112,36 @@ int main()
 	chain2.please_constraint = true;
 
 	// Load our model object
-	CTarget target1(0, 1, 0);
+	Target target1(0, 1, 0);
 	//Target target2(0, 1, 0);
 	//target = target1;
 
 	vector<Chain*> vec;
 
-	CTarget target2(1, 0, 0);
+	Target target2(1, 0, 0);
 	Chain *shoulder = new Chain(glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), &target2, 1);
 	vec.push_back(shoulder);
 
-	CTarget target3(0.5, -1, 0);
+	Target target3(0.5, -1, 0);
 	Chain *bodyRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(0.5, -1, 0), &target3, 1);
 	vec.push_back(bodyRight);
 
-	CTarget target4(0, 0, 0);
+	Target target4(0, 0, 0);
 	Chain *bodyLeft = new Chain(glm::vec3(0.5, -1, 0), glm::vec3(0, 0, 0), &target4, 1);
 	vec.push_back(bodyLeft);
 
-	CTarget target5(0, 1, 1);
+	Target target5(0, 1, 1);
 	Chain *armLeft = new Chain(glm::vec3(0, 0, 0), glm::vec3(0, 1, 1), &target5, 2);
 	vec.push_back(armLeft);
 
-	CTarget target6(1, 1, 1);
+	Target target6(1, 1, 1);
 	target = target6;
 	Chain *armRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), &target, 2);
-	vector<glm::vec4> armRightConstrain;
-	armRightConstrain.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 90.0f));
-	armRightConstrain.push_back(glm::vec4(90.0f, 90.0f, 0.0f, 0.0f));
+	vector<glm::vec4> armRightConstraint;
+	armRightConstraint.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 90.0f));
+	armRightConstraint.push_back(glm::vec4(90.0f, 90.0f, 0.0f, 0.0f));
 	armRight->please_constraint = true;
-	armRight->SetConstraint(armRightConstrain);
+	armRight->SetConstraint(armRightConstraint);
 	vec.push_back(armRight);
 
 	//vec.push_back(new Chain(glm::vec3(0, 1, 0), glm::vec3(-1, 1.5, 0), &target2, 1));
@@ -150,7 +150,7 @@ int main()
 	// Leap motion stuff
 	//Leap::Controller controller;
 	bool controller_msg_displayed = false;
-	bool isAnimate = false;
+	bool isAnimate = true;
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -177,7 +177,7 @@ int main()
 		if (points_to_travel.size() > 0 && isAnimate)
 		{
 			Sleep(30);
-			target.mPosition = points_to_travel[0];
+			target.position = points_to_travel[0];
 			points_to_travel.erase(points_to_travel.begin());
 		}
 
@@ -219,7 +219,7 @@ int main()
 #pragma region "User input"
 
 // Moves/alters the target position based on user input
-void Do_Movement(CTarget * target)
+void Do_Movement(Target * target)
 {
 	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
 		target->ProcessTranslation(FORWARD, deltaTime);
