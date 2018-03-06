@@ -32,17 +32,18 @@ public:
 	// Functions
 	CEndEffector(int x, int y, int z);
 	void Render(glm::mat4 view, glm::mat4 proj);
-	void ProcessTranslation(Camera_Movement direction, GLfloat deltaTime);
+	void ProcessInput(Camera_Movement direction, GLfloat deltaTime);
 	void Animate(std::vector<glm::vec3> interpolated_points);
 
 private:
 
 	/* Data */
-	Model objectModel;
 	GLchar* pathToModel = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\sphere.off";
 	GLchar* vertexShaderPath = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.vs";
 	GLchar* fragShaderPath = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.frag";
-	Shader objectShader;
+	
+	Model mModel;
+	Shader mShader;
 
 	/* Functions */
 

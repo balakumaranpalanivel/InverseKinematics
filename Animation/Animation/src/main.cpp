@@ -222,19 +222,19 @@ int main()
 void Do_Movement(CEndEffector * target)
 {
 	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
-		target->ProcessTranslation(FORWARD, deltaTime);
+		target->ProcessInput(FORWARD, deltaTime);
 	else if (keys[GLFW_KEY_UP])
-		target->ProcessTranslation(UP, deltaTime);
+		target->ProcessInput(UP, deltaTime);
 
 	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_DOWN])
-		target->ProcessTranslation(BACKWARD, deltaTime);
+		target->ProcessInput(BACKWARD, deltaTime);
 	else if (keys[GLFW_KEY_DOWN])
-		target->ProcessTranslation(DOWN, deltaTime);
+		target->ProcessInput(DOWN, deltaTime);
 
 	if (keys[GLFW_KEY_LEFT])
-		target->ProcessTranslation(LEFT, deltaTime);
+		target->ProcessInput(LEFT, deltaTime);
 	if (keys[GLFW_KEY_RIGHT])
-		target->ProcessTranslation(RIGHT, deltaTime);
+		target->ProcessInput(RIGHT, deltaTime);
 }
 
 // Is called whenever a key is pressed/released via GLFW
