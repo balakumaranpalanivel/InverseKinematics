@@ -1,5 +1,5 @@
 //
-//  Target.cpp
+//  CEndEffector.cpp
 //
 
 #include "EndEffector.h"
@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <Windows.h>
 
-Target::Target(int x, int y, int z) {
+CEndEffector::CEndEffector(int x, int y, int z) {
 
 	// Create the shader to use for the controller
 	Shader modelS(vertexShaderPath, fragShaderPath);
@@ -26,7 +26,7 @@ Target::Target(int x, int y, int z) {
 	yaw = 0.0f;
 }
 
-void Target::Render(glm::mat4 view, glm::mat4 proj) {
+void CEndEffector::Render(glm::mat4 view, glm::mat4 proj) {
 
 	objectShader.Use();
 
@@ -56,7 +56,7 @@ void Target::Render(glm::mat4 view, glm::mat4 proj) {
 
 }
 
-void Target::ProcessTranslation(Camera_Movement direction, GLfloat deltaTime) {
+void CEndEffector::ProcessTranslation(Camera_Movement direction, GLfloat deltaTime) {
 	GLfloat velocity = 2.0f * deltaTime;
 	if (direction == UP)
 		this->position.y += 1.0f * velocity;
@@ -71,13 +71,13 @@ void Target::ProcessTranslation(Camera_Movement direction, GLfloat deltaTime) {
 	if (direction == BACKWARD)
 		this->position.z -= 1.0f * velocity;
 
-	std::cout << "Updated Target Position: (" << this->position.x << "," <<
+	std::cout << "Updated CEndEffector Position: (" << this->position.x << "," <<
 		this->position.y << "," << this->position.z << ")" << std::endl;
 
 }
 
 
-void Target::Animate(std::vector<glm::vec3> interpolated_points)
+void CEndEffector::Animate(std::vector<glm::vec3> interpolated_points)
 {
 	GLfloat currentFrame = glfwGetTime();
 	GLfloat lastFrame = 0.0f;
@@ -90,7 +90,7 @@ void Target::Animate(std::vector<glm::vec3> interpolated_points)
 		//deltaTime = currentFrame - lastFrame;
 		//lastFrame = currentFrame;
 		this->position = interpolated_points[i];
-		std::cout << "Updated Target Position: (" << this->position.x << "," <<
+		std::cout << "Updated CEndEffector Position: (" << this->position.x << "," <<
 			this->position.y << "," << this->position.z << ")" << std::endl;
 
 	}
@@ -109,7 +109,7 @@ void Target::Animate(std::vector<glm::vec3> interpolated_points)
 	//if (direction == BACKWARD)
 	//	this->position.z -= 1.0f * velocity;
 
-	//std::cout << "Updated Target Position: (" << this->position.x << "," <<
+	//std::cout << "Updated CEndEffector Position: (" << this->position.x << "," <<
 	//	this->position.y << "," << this->position.z << ")" << std::endl;
 
 }

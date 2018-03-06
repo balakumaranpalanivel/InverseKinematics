@@ -22,7 +22,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <GL/glew.h>
 
-class Target {
+class CEndEffector {
 public:
 	glm::vec3 position;
 	float pitch;
@@ -30,7 +30,7 @@ public:
 	glm::vec3 scale;
 
 	// Functions
-	Target(int x, int y, int z);
+	CEndEffector(int x, int y, int z);
 	void Render(glm::mat4 view, glm::mat4 proj);
 	void ProcessTranslation(Camera_Movement direction, GLfloat deltaTime);
 	void Animate(std::vector<glm::vec3> interpolated_points);
