@@ -143,7 +143,7 @@
     <ClCompile Include="src\MultiChain.cpp" />
     <ClCompile Include="src\Segment.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\Target.cpp" />
+    <ClCompile Include="src\EndEffector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
@@ -154,7 +154,7 @@
     <ClInclude Include="src\Segment.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Spline.h" />
-    <ClInclude Include="src\Target.h" />
+    <ClInclude Include="src\EndEffector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\segment.frag" />

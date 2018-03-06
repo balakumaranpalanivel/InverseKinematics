@@ -1,4 +1,13 @@
+//
+//  MultiChain.hpp
+//  ik-opengl
+//
+//  Created by Jesse Zhou on 6/9/17.
+//  Copyright © 2017 Jesse and Robb. All rights reserved.
+//
+
 #pragma once
+
 #include <stdio.h>
 #include <vector>
 #include <stack>
@@ -18,27 +27,26 @@
 #include <glm/gtx/projection.hpp>
 #include <GL/glew.h>
 
-
-struct ChainNode
-{
-	Chain *value;
-	ChainNode *parent;
-	vector<ChainNode*>* children;
+// Tree data structure
+struct ChainNode {
+	Chain * value;
+	ChainNode * parent;
+	vector<ChainNode*> * children;
 };
 
-class MultiChain
-{
+class MultiChain {
+
 public:
 	MultiChain(vector<Chain*> chains);
-	bool Insert(ChainNode *root, Chain *chain);
+	bool Insert(ChainNode * root, Chain * chain);
 	void Solve();
 	void Render(glm::mat4 view, glm::mat4 proj);
 
-	ChainNode *mRoot;
-	map<ChainNode*, bool> mLeaves;
-	glm::vec3 mOrigin;
+	ChainNode * root;
+	map<ChainNode*, bool> leaves;
+	glm::vec3 origin;
 
 private:
-	void Forward(ChainNode *root);
-	void Backward(ChainNode *root);
+	void Forward(ChainNode * root);
+	void Backward(ChainNode * root);
 };

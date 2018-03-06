@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 // Std. Includes
 #include <string>
@@ -24,26 +23,26 @@ struct Vertex
 	glm::vec2 TexCoords;
 };
 
-struct Texture 
+struct Texture
 {
 	GLuint id;
 	string type;
 };
 
-class CMesh
+class Mesh 
 {
 public:
-	/*  CMesh Data  */
+	/*  Mesh Data  */
 	vector<Vertex> vertices;
 	vector<GLuint> indices;
 	vector<Texture> textures;
 
 	/*  Functions  */
 	// Constructor
-	CMesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures);
+	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures);
 
-	// Render the CMesh
-	void Draw(CShader shader);
+	// Render the mesh
+	void Draw(Shader shader);
 
 private:
 	/*  Render data  */

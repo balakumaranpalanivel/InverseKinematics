@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 // Std. Includes
 #include <string>
@@ -25,37 +24,30 @@ using namespace std;
 
 GLint TextureFromFile(const char* path, string directory);
 
-class CModel
+class Model
 {
 public:
 	/*  Functions   */
 	// Constructor, expects a filepath to a 3D model.
-	CModel() {}
-	CModel(GLchar* path);
+	Model() {}
+	Model(GLchar* path);
 
 	// Draws the model, and thus all its meshes
-	void Draw(CShader shader);
+	void Draw(Shader shader);
 
 private:
 	/*  Model Data  */
-	vector<CMesh> meshes;
+	vector<Mesh> meshes;
 	string directory;
-	/*
-		Stores all the textures loaded so far, optimization to
-		make sure textures aren't loaded more than once.
-	*/
-	vector<Texture> textures_loaded;	
+	vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
-	// Loads a model and stores the meshes in the meshes vector.
+										/*  Functions   */
+										// Loads a model and stores the meshes in the meshes vector.
 	void LoadModel(string path);
 
-	/*
-		Processes a node in a recursive fashion. Processes each individual 
-		mesh located at the node and repeats this process on its 
-		children nodes (if any).
-	*/
+	// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 	void ProcessNode(aiNode* node, const aiScene* scene);
 
-	CMesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 };
 

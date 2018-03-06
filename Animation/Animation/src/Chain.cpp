@@ -1,6 +1,6 @@
 #include "Chain.h"
 
-Chain::Chain(vector<glm::vec3> joints, Target * t)
+Chain::Chain(vector<glm::vec3> joints, CEndEffector * t)
 {
 
 	vector<float> lengths;
@@ -40,7 +40,7 @@ void Chain::SetConstraint(vector<glm::vec4> constraint_list)
 }
 
 
-Chain::Chain(glm::vec3 origin, glm::vec3 end, Target * t, int partitions)
+Chain::Chain(glm::vec3 origin, glm::vec3 end, CEndEffector * t, int partitions)
 {
 	vector<float> lengths;
 	vector<glm::quat> directions;
@@ -100,7 +100,7 @@ void Chain::Solve()
 	}
 	else
 	{
-		// Target is in reach - Use FABRIK to solve
+		// CEndEffector is in reach - Use FABRIK to solve
 		int count = 0;
 
 		// Find the difference between the target and the last point of the chain

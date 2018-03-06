@@ -109,6 +109,67 @@ void interpolate()
 	//glFlush();
 }
 
+void hermite()
+{
+	// Calculate Hermite form with
+	//	p0 = ctrlPoints[0]
+	//  p1 = ctrlPoints[3]
+	//  tangent "weights" chosen to show that curve can exit control polygon's convex hull
+	//  tangent at p0 = 3*(ctrlPoints[1]-ctrlPoints[0])
+	//  tangent at p1 = 6*(ctrlPoints[3]-ctrlPoints[2])
+
+	printf("\nCalculating Hermite Form with specific endpoint tangents...\n");
+
+	//glLineWidth(4.0);
+	//glColor3f(1.0f, 1.0f, 1.0f);
+
+	GLfloat fu[N];
+
+	//glBegin(GL_LINE_STRIP);
+
+	for (int uInt = 0; uInt <= T; uInt++)
+	{
+		GLfloat u = uInt / (GLfloat)T;
+		GLfloat u2 = u * u;
+		GLfloat u3 = u2 * u;
+		fu[0] = 2.0*u3 - 3.0*u2 + 1.0;
+		fu[1] = -2.0*u3 + 3.0*u2;
+		fu[2] = u3 - 2.0*u2 + u;
+		fu[3] = u3 - u2;
+
+		GLfloat x = 0.0;
+		GLfloat y = 0.0;
+		GLfloat z = 0.0;
+
+		// p0 = ctrlPoints[0]
+		x += fu[0] * ctrlPoints[0][0];
+		y += fu[0] * ctrlPoints[0][1];
+		z += fu[0] * ctrlPoints[0][2];
+
+		// p1 = ctrlPoints[3]
+		x += fu[1] * ctrlPoints[3][0];
+		y += fu[1] * ctrlPoints[3][1];
+		z += fu[1] * ctrlPoints[3][2];
+
+		//  tangent at p0 = ctrlPoints[1]-ctrlPoints[0]
+		x += fu[2] * (3.0*(ctrlPoints[1][0] - ctrlPoints[0][0]));
+		y += fu[2] * (3.0*(ctrlPoints[1][1] - ctrlPoints[0][1]));
+		z += fu[2] * (3.0*(ctrlPoints[1][2] - ctrlPoints[0][2]));
+
+		//  tangent at p1 = ctrlPoints[3]-ctrlPoints[2]
+		x += fu[3] * (6.0*(ctrlPoints[3][0] - ctrlPoints[2][0]));
+		y += fu[3] * (6.0*(ctrlPoints[3][1] - ctrlPoints[2][1]));
+		z += fu[3] * (6.0*(ctrlPoints[3][2] - ctrlPoints[2][2]));
+
+		printf("x=%g  y=%g z=%g\n", x, y, z);
+		points_to_travel.push_back(glm::vec3(x, y, z));
+
+	}
+
+	//glEnd();
+	//glFlush();
+}
+
 void drawCurve()
 {
 	switch (typeMode) {
@@ -122,7 +183,7 @@ void drawCurve()
 		interpolate();
 		break;
 	case 3:
-		//hermite();
+		hermite();
 		break;
 	case 4:
 		//bezier();

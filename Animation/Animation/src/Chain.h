@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "Target.h"
+#include "EndEffector.h"
 #include "Segment.h"
 
 // GLM includes
@@ -24,8 +24,8 @@ class Chain
 {
 public:
 	
-	Chain(vector<glm::vec3> joints, Target * t);
-	Chain(glm::vec3 origin, glm::vec3 end, Target * t, int partitions = 5);
+	Chain(vector<glm::vec3> joints, CEndEffector * t);
+	Chain(glm::vec3 origin, glm::vec3 end, CEndEffector * t, int partitions = 5);
 	
 	void Render(glm::mat4 view, glm::mat4 proj);
 	void Solve();
@@ -54,7 +54,7 @@ public:
 	float total_length;
 	glm::vec3 origin;
 	glm::vec3 end;
-	Target * target;
+	CEndEffector * target;
 	bool please_constraint = false;
 
 private:

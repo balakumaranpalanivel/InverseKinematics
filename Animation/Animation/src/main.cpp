@@ -12,7 +12,7 @@
 // GL includes
 #include "Shader.h"
 #include "Camera.h"
-#include "Target.h"
+#include "EndEffector.h"
 #include "Chain.h"
 #include "MultiChain.h"
 
@@ -30,8 +30,8 @@ GLuint screenWidth = 1200, screenHeight = 800;
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void Do_Movement(Target * target);
-//void ProcessFrame(const Leap::Controller & controller, Target * target);
+void Do_Movement(CEndEffector * target);
+//void ProcessFrame(const Leap::Controller & controller, CEndEffector * target);
 
 // Camera
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -85,9 +85,9 @@ int main()
 	glEnable(GL_MULTISAMPLE);
 
 	// Load our model object
-	Target target(1.0f, 1.0f, 0);
-	//Target target2(2, 0, 0);
-	//Target target3(1, 1, 0);
+	CEndEffector target(1.0f, 1.0f, 0);
+	//CEndEffector target2(2, 0, 0);
+	//CEndEffector target3(1, 1, 0);
 
 	// Load joints
 	vector<glm::vec3> joints1;
@@ -112,29 +112,29 @@ int main()
 	chain2.please_constraint = true;
 
 	// Load our model object
-	Target target1(0, 1, 0);
-	//Target target2(0, 1, 0);
+	CEndEffector target1(0, 1, 0);
+	//CEndEffector target2(0, 1, 0);
 	//target = target1;
 
 	vector<Chain*> vec;
 
-	Target target2(1, 0, 0);
+	CEndEffector target2(1, 0, 0);
 	Chain *shoulder = new Chain(glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), &target2, 1);
 	vec.push_back(shoulder);
 
-	Target target3(0.5, -1, 0);
+	CEndEffector target3(0.5, -1, 0);
 	Chain *bodyRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(0.5, -1, 0), &target3, 1);
 	vec.push_back(bodyRight);
 
-	Target target4(0, 0, 0);
+	CEndEffector target4(0, 0, 0);
 	Chain *bodyLeft = new Chain(glm::vec3(0.5, -1, 0), glm::vec3(0, 0, 0), &target4, 1);
 	vec.push_back(bodyLeft);
 
-	Target target5(0, 1, 1);
+	CEndEffector target5(0, 1, 1);
 	Chain *armLeft = new Chain(glm::vec3(0, 0, 0), glm::vec3(0, 1, 1), &target5, 2);
 	vec.push_back(armLeft);
 
-	Target target6(1, 1, 1);
+	CEndEffector target6(1, 1, 1);
 	target = target6;
 	Chain *armRight = new Chain(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), &target, 2);
 	vector<glm::vec4> armRightConstraint;
@@ -219,7 +219,7 @@ int main()
 #pragma region "User input"
 
 // Moves/alters the target position based on user input
-void Do_Movement(Target * target)
+void Do_Movement(CEndEffector * target)
 {
 	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
 		target->ProcessTranslation(FORWARD, deltaTime);
