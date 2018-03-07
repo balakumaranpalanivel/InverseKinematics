@@ -22,7 +22,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <GL/glew.h>
 
-class Segment {
+// chain link - chain
+class Segment
+{
 public:
 	glm::vec3 position;
 	glm::vec3 end_position;

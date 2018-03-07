@@ -42,16 +42,57 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+void MouseCallback(GLFWwindow *window, double xPos, double yPos)
+{
+	if (firstMouse)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		firstMouse = false;
+	}
+
+	GLfloat xOffset = xPos - lastX;
+	GLfloat yOffset = lastY - yPos;  // Reversed since y-coordinates go from bottom to left
+
+	lastX = xPos;
+	lastY = yPos;
+
+	camera.ProcessMouseMovement(xOffset, yOffset, true);
+}
+
+void DoCameraMovement()
+{
+	// Camera controls
+	if (keys[GLFW_KEY_W])
+	{
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_S])
+	{
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_A])
+	{
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	}
+
+	if (keys[GLFW_KEY_D])
+	{
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+	}
+}
+
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
 	determine_control_points();
 
-	char desired_model[1000];
-	cout << "1: Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
-	cin >> desired_model;
-
-	cout << desired_model << endl;
+	char desired_model[] = "1";
+	//cout << "1: Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
+	//cin >> desired_model;
+	//cout << desired_model << endl;
 
 	// Init GLFW
 	glfwInit();
@@ -62,12 +103,13 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "FABRIK", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Inverse Kinematics", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set the required callback functions
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetCursorPosCallback(window, MouseCallback);
 
 	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
@@ -91,7 +133,8 @@ int main()
 
 	// Load joints
 	vector<glm::vec3> joints1;
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 5; ++i)
+	{
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		joints1.push_back(glm::vec3(0, r, 0));
 	}
@@ -169,22 +212,23 @@ int main()
 		glfwPollEvents();
 
 		// Clear the colorbuffer
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Do_Movement(&target);
+		DoCameraMovement();
 
 		if (points_to_travel.size() > 0 && isAnimate)
 		{
-			Sleep(30);
-			target.position = points_to_travel[0];
+			Sleep(40);
+			target.mPosition = points_to_travel[0];
 			points_to_travel.erase(points_to_travel.begin());
 		}
 
 		//if(controller.isConnected()) ProcessFrame(controller, &target);
 
 		// Transformation matrices
-		glm::mat4 projection = glm::perspective(camera.Zoom, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(camera.GetZoom(), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 
 		glm::mat4 view = camera.GetViewMatrix();
 		target.Render(view, projection);
@@ -247,6 +291,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
 		keys[key] = false;
+
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)

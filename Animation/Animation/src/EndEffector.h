@@ -20,32 +20,33 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <GL/glew.h>
 
-class CEndEffector {
+class CEndEffector
+{
 public:
-	glm::vec3 position;
-	float pitch;
-	float yaw;
-	glm::vec3 scale;
+	glm::vec3 mPosition;
+	float mPitch, mYaw;
+	glm::vec3 mScale;
 
 	// Functions
 	CEndEffector(int x, int y, int z);
+
 	void Render(glm::mat4 view, glm::mat4 proj);
-	void ProcessInput(Camera_Movement direction, GLfloat deltaTime);
 	void Animate(std::vector<glm::vec3> interpolated_points);
+
+	void ProcessInput(Camera_Movement direction, GLfloat deltaTime);
 
 private:
 
 	/* Data */
-	GLchar* pathToModel = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\sphere.off";
-	GLchar* vertexShaderPath = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.vs";
-	GLchar* fragShaderPath = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.frag";
+	GLchar* mModelPath = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\sphere.off";
+	GLchar* mVertexShader = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.vs";
+	GLchar* mFragmentShader = "C:\\Workspace\\RealtimeAnimation\\InverseKinematics\\OpenGL_Kinematics\\Animation\\Animation\\src\\shaders\\shader.frag";
 	
 	Model mModel;
 	Shader mShader;
-
-	/* Functions */
 
 
 };

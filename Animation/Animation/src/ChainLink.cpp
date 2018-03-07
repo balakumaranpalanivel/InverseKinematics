@@ -1,18 +1,10 @@
-//
-//  Segment.cpp
-//  ik-opengl
-//
-//  Created by Jesse Zhou on 6/1/17.
-//  Copyright © 2017 Jesse and Robb. All rights reserved.
-//
-
-#include "Segment.h"
+#include "ChainLink.h"
 
 #include "EndEffector.h"
 #include "Camera.h"
 
-Segment::Segment(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir) {
-
+Segment::Segment(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir)
+{
 	// Shader init
 	Shader modelS(vertexShaderPath, fragShaderPath);
 	objectShader = modelS;
@@ -20,7 +12,8 @@ Segment::Segment(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir) 
 	Set(base, end, magnitude, dir);
 }
 
-void Segment::Set(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir) {
+void Segment::Set(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir)
+{
 	quat = dir;
 	position = base;
 	end_position = end;
@@ -28,18 +21,19 @@ void Segment::Set(glm::vec3 base, glm::vec3 end, float magnitude, glm::quat dir)
 	this->constraint_cone = glm::vec4(45.0f, 45.0f, 45.0f, 45.0f);
 }
 
-void Segment::Render(glm::mat4 view, glm::mat4 proj) {
+void Segment::Render(glm::mat4 view, glm::mat4 proj)
+{
 
 	objectShader.Use();
 
-	GLint objectColorLoc = glGetUniformLocation(objectShader.Program, "objectColor");
-	GLint lightColorLoc = glGetUniformLocation(objectShader.Program, "lightColor");
-	GLint lightPosLoc = glGetUniformLocation(objectShader.Program, "lightPos");
-	GLint viewPosLoc = glGetUniformLocation(objectShader.Program, "viewPos");
+	GLint objColor = glGetUniformLocation(objectShader.Program, "objectColor");
+	GLint lightColor = glGetUniformLocation(objectShader.Program, "lightColor");
+	glUniform3f(objColor, 1.0f, 1.0f, 1.0f);
+	glUniform3f(lightColor, 1.0f, 1.0f, 1.0f);
 
-	glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f);
-	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
-	glUniform3f(lightPosLoc, 1.0f, 1.0f, 3.0f);
+	GLint lightPos = glGetUniformLocation(objectShader.Program, "lightPos");
+	GLint viewPosLoc = glGetUniformLocation(objectShader.Program, "viewPos");
+	glUniform3f(lightPos, 1.0f, 1.0f, 3.0f);
 	glUniform3f(viewPosLoc, 0.0, 0.0, 3.0);
 
 	// Calculate the toWorld matrix for the model
@@ -127,7 +121,8 @@ void Segment::Render(glm::mat4 view, glm::mat4 proj) {
 
 }
 
-glm::mat4 Segment::GetFaceNormals() {
+glm::mat4 Segment::GetFaceNormals()
+{
 	//  
 	//  glm::vec3 up = glm::vec3(0, 1, 0);
 	//  glm::vec3 right = glm::cross(glm::vec3(0, 0, -1), up);
@@ -152,11 +147,13 @@ glm::mat4 Segment::GetFaceNormals() {
 
 }
 
-glm::vec3 Segment::GetConstraintConeAxis() {
+glm::vec3 Segment::GetConstraintConeAxis()
+{
 	//glm::vec3 direction = glm::vec3(0, 0, -1) * glm::mat3(glm::toMat4(quat));
 	return end_position - position;
 }
 
-void Segment::SetConstraintConeDegrees(glm::vec4 degrees) {
+void Segment::SetConstraintConeDegrees(glm::vec4 degrees)
+{
 	constraint_cone = degrees;
 }

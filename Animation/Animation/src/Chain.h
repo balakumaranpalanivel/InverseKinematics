@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "EndEffector.h"
-#include "Segment.h"
+#include "ChainLink.h"
 
 // GLM includes
 #include <glm/glm.hpp>

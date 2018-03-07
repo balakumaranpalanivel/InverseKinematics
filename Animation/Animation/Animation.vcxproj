@@ -141,7 +141,8 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\MultiChain.cpp" />
-    <ClCompile Include="src\Segment.cpp" />
+    <ClCompile Include="src\ChainLink.cpp" />
+    <ClCompile Include="src\Object3D.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\EndEffector.cpp" />
   </ItemGroup>
@@ -151,7 +152,8 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\MultiChain.h" />
-    <ClInclude Include="src\Segment.h" />
+    <ClInclude Include="src\ChainLink.h" />
+    <ClInclude Include="src\Object3D.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Spline.h" />
     <ClInclude Include="src\EndEffector.h" />

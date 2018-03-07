@@ -81,16 +81,16 @@ Chain::Chain(glm::vec3 origin, glm::vec3 end, CEndEffector * t, int partitions)
 void Chain::Solve()
 {
 	// Find the distance from origin
-	float current_distance = glm::length(target->position - origin);
+	float current_distance = glm::length(target->mPosition - origin);
 
 	// If target is out of reach - extend the arm fully
 	if (current_distance > total_length)
 	{
 		for (int i = 0; i < joints.size() - 1; ++i)
 		{
-			float r = glm::length(target->position - joints[i]);
+			float r = glm::length(target->mPosition - joints[i]);
 			float l = segments[i].magnitude / r;
-			joints[i + 1] = (1 - l) * joints[i] + l * target->position;
+			joints[i + 1] = (1 - l) * joints[i] + l * target->mPosition;
 		}
 
 		vector<float> lengths;
@@ -105,7 +105,7 @@ void Chain::Solve()
 
 		// Find the difference between the target and the last point of the chain
 		float difference = glm::length(
-			joints[joints.size() - 1] - target->position
+			joints[joints.size() - 1] - target->mPosition
 		);
 
 		// Solve for the angles till acceptable tolerance
@@ -119,7 +119,7 @@ void Chain::Solve()
 
 			// Update the difference
 			difference = glm::length(
-				joints[joints.size() - 1] - target->position
+				joints[joints.size() - 1] - target->mPosition
 			);
 
 			// Limit the retrying
@@ -157,7 +157,7 @@ void Chain::Backward()
 	auto end = joints.end() - 1;
 
 	// Make the end as the target position
-	*end = target->position;
+	*end = target->mPosition;
 
 	// Adjust each of remaining joints accordingly
 	for (int i = int(joints.size() - 2); i >= 0; --i)

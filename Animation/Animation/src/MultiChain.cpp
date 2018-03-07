@@ -93,7 +93,7 @@ void MultiChain::Backward(ChainNode * root) {
 		// Set the centroid to the target; this should solve toward the centroid now
 
 		//if(glm::length(centroid - root->value->origin) < root->value->total_length)
-		root->value->target->position = centroid;
+		root->value->target->mPosition = centroid;
 	}
 
 	if (root->parent) {
