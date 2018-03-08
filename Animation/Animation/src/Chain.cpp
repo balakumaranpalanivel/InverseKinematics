@@ -32,7 +32,7 @@ void Chain::SetConstraint(vector<glm::vec4> constraint_list)
 		cout << "Constraints given: " << constraint_list.size() << endl;
 		return;
 	}
-
+	this->please_constraint = true;
 	for (int i = 0; i < segments.size(); i++)
 	{
 		segments[i].mConstraintCone = constraint_list[i];
