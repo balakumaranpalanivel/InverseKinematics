@@ -38,7 +38,7 @@ public:
 	glm::vec3 Constraint(
 		glm::vec3 point,
 		float true_length,
-		Segment * seg);
+		CChainLink * seg);
 
 	void CalculateLinks(
 		vector<glm::vec3> joints,
@@ -59,7 +59,7 @@ public:
 
 private:
 	vector<glm::vec3> joints; // Joints themselves
-	vector<Segment> segments; // The pieces that actually get rendered
+	vector<CChainLink> segments; // The pieces that actually get rendered
 	float tolerance = 0.01f;
 
 };

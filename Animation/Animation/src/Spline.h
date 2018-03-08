@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Config.h"
 
 // define 4 2D control points
 
@@ -18,7 +19,8 @@ static GLfloat ctrlPoints[N][3] = {
 
 GLUnurbsObj *theNurb;
 
-int typeMode = 2;	 // 1 = control polyline
+int typeMode = CONFIG.SPLINE_CONFIG;
+					 // 1 = control polyline
 					 // 2 = interpolating cubic 
 					 // 3 = hermite cubic (with specific endpoint tangents)
 					 // 4 = bezier cubic (Bernstein)

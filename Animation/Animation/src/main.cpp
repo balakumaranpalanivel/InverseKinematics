@@ -24,6 +24,8 @@
 
 #include "Spline.h"
 
+#include "Config.h"
+
 // Properties
 GLuint screenWidth = 1200, screenHeight = 800;
 
@@ -133,7 +135,7 @@ int main()
 
 	// Load joints
 	vector<glm::vec3> joints1;
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		joints1.push_back(glm::vec3(0, r, 0));
@@ -233,24 +235,39 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		target.Render(view, projection);
 
-		if (strcmp(desired_model, "1") == 0) {
-			chain1.Solve();
-			chain1.Render(view, projection);
+		switch (CONFIG.CHAIN_CONFIG)
+		{
+			case 0:
+			{
+				chain1.Solve();
+				chain1.Render(view, projection);
+				break;
+			}
+			default:
+			{
+				cout << "Invalid Chain Config" << endl;
+				break;
+			}
 		}
-		else if (strcmp(desired_model, "2") == 0) {
-			multichain.Solve();
-			multichain.Render(view, projection);
-			target2.Render(view, projection);
-			target3.Render(view, projection);
-		}
-		else if (strcmp(desired_model, "3") == 0) {
-			chain2.Solve();
-			chain2.Render(view, projection);
-		}
-		else {
-			cout << "Invalid chain model" << endl;
-			break;
-		}
+
+		//if (strcmp(desired_model, "1") == 0) {
+		//	chain1.Solve();
+		//	chain1.Render(view, projection);
+		//}
+		//else if (strcmp(desired_model, "2") == 0) {
+		//	multichain.Solve();
+		//	multichain.Render(view, projection);
+		//	target2.Render(view, projection);
+		//	target3.Render(view, projection);
+		//}
+		//else if (strcmp(desired_model, "3") == 0) {
+		//	chain2.Solve();
+		//	chain2.Render(view, projection);
+		//}
+		//else {
+		//	cout << "Invalid chain model" << endl;
+		//	break;
+		//}
 
 		// Swap the buffers
 		glfwSwapBuffers(window);

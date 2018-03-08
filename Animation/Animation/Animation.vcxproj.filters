@@ -77,15 +77,12 @@
     <ClInclude Include="src\Object3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\segment.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="src\shaders\shader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="src\shaders\segment.vs">
       <Filter>Shaders</Filter>
     </None>
     <None Include="src\shaders\shader.vs">

@@ -10,7 +10,7 @@ Chain::Chain(vector<glm::vec3> joints, CEndEffector * t)
 	for (int i = 0; i < lengths.size(); ++i)
 	{
 		segments.push_back(
-			Segment(
+			CChainLink(
 				joints[i], joints[i + 1],
 				lengths[i],
 				directions[i])
@@ -35,7 +35,7 @@ void Chain::SetConstraint(vector<glm::vec4> constraint_list)
 
 	for (int i = 0; i < segments.size(); i++)
 	{
-		segments[i].constraint_cone = constraint_list[i];
+		segments[i].mConstraintCone = constraint_list[i];
 	}
 }
 
@@ -65,7 +65,7 @@ Chain::Chain(glm::vec3 origin, glm::vec3 end, CEndEffector * t, int partitions)
 	for (int i = 0; i < lengths.size(); ++i)
 	{
 		segments.push_back(
-			Segment(
+			CChainLink(
 				joints[i], joints[i + 1],
 				lengths[i],
 				directions[i])
@@ -89,7 +89,7 @@ void Chain::Solve()
 		for (int i = 0; i < joints.size() - 1; ++i)
 		{
 			float r = glm::length(target->mPosition - joints[i]);
-			float l = segments[i].magnitude / r;
+			float l = segments[i].mMagnitude / r;
 			joints[i + 1] = (1 - l) * joints[i] + l * target->mPosition;
 		}
 
@@ -163,7 +163,7 @@ void Chain::Backward()
 	for (int i = int(joints.size() - 2); i >= 0; --i)
 	{
 		float r = glm::length(joints[i + 1] - joints[i]);
-		float l = segments[i].magnitude / r;
+		float l = segments[i].mMagnitude / r;
 		joints[i] = (1 - l) * joints[i + 1] + l * joints[i];
 	}
 }
@@ -179,13 +179,13 @@ void Chain::Forward()
 	for (int i = 0; i < joints.size() - 1; ++i)
 	{
 		float r = glm::length(joints[i + 1] - joints[i]);
-		float l = segments[i].magnitude / r;
+		float l = segments[i].mMagnitude / r;
 
 		glm::vec3 new_point = (1 - l) * joints[i] + l * joints[i + 1];
 
 		if (i > 0 && this->please_constraint)
 		{
-			new_point = Constraint(new_point, segments[i].magnitude, &(segments[i - 1]));
+			new_point = Constraint(new_point, segments[i].mMagnitude, &(segments[i - 1]));
 		}
 
 		joints[i + 1] = new_point;
@@ -225,10 +225,10 @@ void Chain::CalculateLinks(vector<glm::vec3> joints, vector<float> * lengths,
 	}
 }
 
-glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, Segment * seg)
+glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, CChainLink * seg)
 {
 	glm::vec3 retval = point;
-	glm::vec3 relative_point = point - seg->end_position;
+	glm::vec3 relative_point = point - seg->mEndPosition;
 	bool debug = false;
 
 	/*
@@ -236,13 +236,13 @@ glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, Segment * seg)
 		the previous segment is pointing in
 	*/
 	glm::vec3 line_dir = glm::normalize(seg->GetConstraintConeAxis());
-	float     scalar = glm::dot(point - seg->end_position, line_dir);
-	glm::vec3 projected_point = scalar * line_dir + seg->end_position;
+	float     scalar = glm::dot(point - seg->mEndPosition, line_dir);
+	glm::vec3 projected_point = scalar * line_dir + seg->mEndPosition;
 
 
 	if (debug)
 	{
-		float angle = glm::acos(scalar / (glm::length(point - seg->end_position) * glm::length(line_dir)));
+		float angle = glm::acos(scalar / (glm::length(point - seg->mEndPosition) * glm::length(line_dir)));
 		cout << "angle: " << glm::degrees(angle) << endl;
 		cout << "scalar: " << scalar << endl;
 		cout << "projected point: " << projected_point.x << " " << projected_point.y << " " << projected_point.z << " " << endl;
@@ -251,9 +251,9 @@ glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, Segment * seg)
 	glm::vec3 adjusted_distance = point - projected_point;
 	if (scalar < 0)
 	{
-		glm::vec3 relative_projected_point = projected_point - seg->end_position;
+		glm::vec3 relative_projected_point = projected_point - seg->mEndPosition;
 		relative_projected_point = -relative_projected_point;
-		projected_point = relative_projected_point + seg->end_position;
+		projected_point = relative_projected_point + seg->mEndPosition;
 	}
 
 	// Get the 2D axes we will be using for this problem
@@ -271,22 +271,22 @@ glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, Segment * seg)
 
 	if (debug)
 	{
-		cout << glm::radians(seg->constraint_cone[0]) << endl;
-		cout << glm::radians(seg->constraint_cone[0]) << endl;
-		cout << glm::tan(glm::radians(seg->constraint_cone[0])) << endl;
+		cout << glm::radians(seg->mConstraintCone[0]) << endl;
+		cout << glm::radians(seg->mConstraintCone[0]) << endl;
+		cout << glm::tan(glm::radians(seg->mConstraintCone[0])) << endl;
 		cout << "x axis: " << x_axis.x << " " << x_axis.y << " " << x_axis.z << endl;
 	}
 
 	// Calculate the cone cross section
-	float proj_length = glm::length(projected_point - seg->end_position);
+	float proj_length = glm::length(projected_point - seg->mEndPosition);
 	float up_cross = proj_length * glm::tan(
-		glm::radians(seg->constraint_cone[0]));
+		glm::radians(seg->mConstraintCone[0]));
 	float down_cross = -(proj_length * glm::tan(
-		glm::radians(seg->constraint_cone[1])));
+		glm::radians(seg->mConstraintCone[1])));
 	float left_cross = -(proj_length * glm::tan(
-		glm::radians(seg->constraint_cone[2])));
+		glm::radians(seg->mConstraintCone[2])));
 	float right_cross = proj_length * glm::tan(
-		glm::radians(seg->constraint_cone[3]));
+		glm::radians(seg->mConstraintCone[3]));
 
 	// See which quadrant we should use
 	float x_bound = x_aspect >= 0 ? right_cross : left_cross;
@@ -306,7 +306,7 @@ glm::vec3 Chain::Constraint(glm::vec3 point, float true_length, Segment * seg)
 		float x = x_bound * glm::cos(a);
 		float y = y_bound * glm::sin(a);
 
-		retval = glm::normalize((projected_point - seg->end_position) + (x_axis * x) + (y_axis * y)) * glm::length(relative_point) + seg->end_position;
+		retval = glm::normalize((projected_point - seg->mEndPosition) + (x_axis * x) + (y_axis * y)) * glm::length(relative_point) + seg->mEndPosition;
 	}
 	else
 	{

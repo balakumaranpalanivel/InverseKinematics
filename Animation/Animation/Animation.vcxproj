@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Chain.h" />
+    <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\MultiChain.h" />
@@ -159,8 +160,6 @@
     <ClInclude Include="src\EndEffector.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\segment.frag" />
-    <None Include="src\shaders\segment.vs" />
     <None Include="src\shaders\shader.frag" />
     <None Include="src\shaders\shader.vs" />
   </ItemGroup>
