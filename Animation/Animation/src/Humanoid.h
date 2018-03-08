@@ -1,11 +1,3 @@
-//
-//  MultiChain.hpp
-//  ik-opengl
-//
-//  Created by Jesse Zhou on 6/9/17.
-//  Copyright © 2017 Jesse and Robb. All rights reserved.
-//
-
 #pragma once
 
 #include <stdio.h>
@@ -34,14 +26,17 @@ struct ChainNode {
 	vector<ChainNode*> * children;
 };
 
-class MultiChain {
+class CHumanoid {
 
 public:
-	MultiChain(vector<Chain*> chains);
+	CHumanoid();
+	CHumanoid(vector<Chain*> chains);
 	bool Insert(ChainNode * root, Chain * chain);
 	void Solve();
 	void Render(glm::mat4 view, glm::mat4 proj);
+	void BuildHumanoid();
 
+	vector<Chain*> mChainList;
 	ChainNode * root;
 	map<ChainNode*, bool> leaves;
 	glm::vec3 origin;

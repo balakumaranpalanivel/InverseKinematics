@@ -14,7 +14,7 @@
 #include "Camera.h"
 #include "EndEffector.h"
 #include "Chain.h"
-#include "MultiChain.h"
+#include "Humanoid.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -89,12 +89,10 @@ void DoCameraMovement()
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
-	determine_control_points();
-
-	char desired_model[] = "1";
-	//cout << "1: Single chain\n2: Multichain\n3: Single Chain w/ Constraint\nEnter the model you want here: ";
-	//cin >> desired_model;
-	//cout << desired_model << endl;
+	if (CONFIG.SPLINE_CONFIG >= 0)
+	{
+		determine_control_points();
+	}
 
 	// Init GLFW
 	glfwInit();
@@ -190,12 +188,11 @@ int main()
 	vec.push_back(armRight);
 
 	//vec.push_back(new Chain(glm::vec3(0, 1, 0), glm::vec3(-1, 1.5, 0), &target2, 1));
-	MultiChain multichain(vec);
+	CHumanoid multichain(vec);
 
 	// Leap motion stuff
 	//Leap::Controller controller;
 	bool controller_msg_displayed = false;
-	bool isAnimate = true;
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -220,7 +217,7 @@ int main()
 		Do_Movement(&target);
 		DoCameraMovement();
 
-		if (points_to_travel.size() > 0 && isAnimate)
+		if (points_to_travel.size() > 0)
 		{
 			Sleep(40);
 			target.mPosition = points_to_travel[0];
@@ -243,31 +240,26 @@ int main()
 				chain1.Render(view, projection);
 				break;
 			}
+			case 1:
+			{
+				multichain.Solve();
+				multichain.Render(view, projection);
+				/*target2.Render(view, projection);
+				target3.Render(view, projection);*/
+				break;
+			}
+			case 2:
+			{
+				chain2.Solve();
+				chain2.Render(view, projection);
+				break;
+			}
 			default:
 			{
 				cout << "Invalid Chain Config" << endl;
 				break;
 			}
 		}
-
-		//if (strcmp(desired_model, "1") == 0) {
-		//	chain1.Solve();
-		//	chain1.Render(view, projection);
-		//}
-		//else if (strcmp(desired_model, "2") == 0) {
-		//	multichain.Solve();
-		//	multichain.Render(view, projection);
-		//	target2.Render(view, projection);
-		//	target3.Render(view, projection);
-		//}
-		//else if (strcmp(desired_model, "3") == 0) {
-		//	chain2.Solve();
-		//	chain2.Render(view, projection);
-		//}
-		//else {
-		//	cout << "Invalid chain model" << endl;
-		//	break;
-		//}
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
