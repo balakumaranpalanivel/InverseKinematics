@@ -20,13 +20,15 @@
 #include <GL/glew.h>
 
 // Tree data structure
-struct ChainNode {
+struct ChainNode
+{
 	Chain * value;
 	ChainNode * parent;
 	vector<ChainNode*> * children;
 };
 
-class CHumanoid {
+class CHumanoid
+{
 
 public:
 	CHumanoid();
@@ -44,4 +46,5 @@ public:
 private:
 	void Forward(ChainNode * root);
 	void Backward(ChainNode * root);
+
 };

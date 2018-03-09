@@ -157,7 +157,7 @@ void CHumanoid::Forward(ChainNode * root) {
 	if (root->parent) {
 		root->value->origin = root->parent->value->end;
 		root->value->Forward();
-		root->value->SetSegments();
+		root->value->AssignLinks();
 	}
 }
 

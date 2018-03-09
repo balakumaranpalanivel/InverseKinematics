@@ -89,4 +89,12 @@
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\shaders\simpleFragmentShader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="src\shaders\simpleVertexShader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

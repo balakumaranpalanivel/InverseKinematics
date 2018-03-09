@@ -36,7 +36,7 @@ void CChainLink::Render(glm::mat4 view, glm::mat4 proj)
 	glm::mat4 model;
 	glm::mat4 T = glm::translate(glm::mat4(1.0f), mStartPosition);
 	glm::mat4 PT = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -0.5));
-	glm::mat4 PS = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 1.0f));
+	glm::mat4 PS = glm::scale(glm::mat4(1.0f), glm::vec3(0.01f, 0.01f, 1.0f));
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, mMagnitude));
 	glm::mat4 R = glm::toMat4(mOrientation);
 

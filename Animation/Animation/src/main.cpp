@@ -29,13 +29,8 @@
 // Properties
 GLuint screenWidth = 1200, screenHeight = 800;
 
-// Function prototypes
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void Do_Movement(CEndEffector * target);
-
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -85,6 +80,45 @@ void DoCameraMovement()
 	}
 }
 
+// Moves/alters the target position based on user input
+void Do_Movement(CEndEffector * pPoint)
+{
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
+		pPoint->ProcessInput(FORWARD, deltaTime);
+	else if (keys[GLFW_KEY_UP])
+		pPoint->ProcessInput(UP, deltaTime);
+
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_DOWN])
+		pPoint->ProcessInput(BACKWARD, deltaTime);
+	else if (keys[GLFW_KEY_DOWN])
+		pPoint->ProcessInput(DOWN, deltaTime);
+
+	if (keys[GLFW_KEY_LEFT])
+		pPoint->ProcessInput(LEFT, deltaTime);
+	if (keys[GLFW_KEY_RIGHT])
+		pPoint->ProcessInput(RIGHT, deltaTime);
+}
+
+// Is called whenever a key is pressed/released via GLFW
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+
+	if (key == GLFW_KEY_SPACE)
+	{
+		keys[key] = true;
+		return;
+	}
+
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
+
+}
+
 int main()
 {
 	// Animate only if a valid Spline configuration is provided
@@ -102,11 +136,13 @@ int main()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Inverse Kinematics", nullptr, nullptr);
+	const GLFWvidmode* videMode;
+	videMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwSetWindowPos(window, (videMode->width - screenWidth) / 2, (videMode->height - screenHeight) / 2);
 	glfwMakeContextCurrent(window);
 
 	// Set the required callback functions
 	glfwSetKeyCallback(window, key_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetCursorPosCallback(window, MouseCallback);
 
 	// Initialize GLEW to setup the OpenGL Function pointers
@@ -201,9 +237,9 @@ int main()
 		DoCameraMovement();
 
 		/*
-			Primitive Animation Seqeunce
+			Simple Animation Seqeunce
 		*/
-		if (points_to_travel.size() > 0)
+		if (points_to_travel.size() > 0 && keys[GLFW_KEY_SPACE])
 		{
 			Sleep(40);
 			animatedEnd.mPosition = points_to_travel[0];
@@ -243,48 +279,3 @@ int main()
 	glfwTerminate();
 	return 0;
 }
-
-#pragma region "User input"
-
-// Moves/alters the target position based on user input
-void Do_Movement(CEndEffector * pPoint)
-{
-	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_UP])
-		pPoint->ProcessInput(FORWARD, deltaTime);
-	else if (keys[GLFW_KEY_UP])
-		pPoint->ProcessInput(UP, deltaTime);
-
-	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_DOWN])
-		pPoint->ProcessInput(BACKWARD, deltaTime);
-	else if (keys[GLFW_KEY_DOWN])
-		pPoint->ProcessInput(DOWN, deltaTime);
-
-	if (keys[GLFW_KEY_LEFT])
-		pPoint->ProcessInput(LEFT, deltaTime);
-	if (keys[GLFW_KEY_RIGHT])
-		pPoint->ProcessInput(RIGHT, deltaTime);
-}
-
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	if (action == GLFW_PRESS)
-		keys[key] = true;
-	else if (action == GLFW_RELEASE)
-		keys[key] = false;
-
-}
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
-		fprintf(stderr, "Click\n");
-	}
-}
-
-#pragma endregion
-

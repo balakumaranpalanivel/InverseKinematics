@@ -20,7 +20,7 @@ CEndEffector::CEndEffector(int x, int y, int z)
 		and messing up the algorithm
 	*/
 	mPosition = glm::vec3(x, y, z) + 0.0001f;
-	mScale = glm::vec3(0.05f, 0.05f, 0.05f);
+	mScale = glm::vec3(0.03f, 0.03f, 0.03f);
 	mPitch = 0.0f;
 	mYaw = 0.0f;
 }
@@ -32,7 +32,7 @@ void CEndEffector::Render(glm::mat4 view, glm::mat4 proj)
 	GLint objColor = glGetUniformLocation(mShader.Program, "objectColor");
 	GLint lightColor = glGetUniformLocation(mShader.Program, "lightColor");
 	glUniform3f(objColor, 1.0f, 1.0f, 1.0f);
-	glUniform3f(lightColor, 1.0f, 0.0f, 0.0f);
+	glUniform3f(lightColor, 0.0f, 0.0f, 0.0f);
 
 	GLint lightPos = glGetUniformLocation(mShader.Program, "lightPos");
 	GLint viewPosLoc = glGetUniformLocation(mShader.Program, "viewPos");
@@ -71,9 +71,6 @@ void CEndEffector::ProcessInput(Camera_Movement direction, GLfloat deltaTime)
 	if (direction == BACKWARD)
 		this->mPosition.z -= 1.0f * velocity;
 
-	std::cout << "Updated End Effector Position: (" << this->mPosition.x << "," <<
-		this->mPosition.y << "," << this->mPosition.z << ")" << std::endl;
-
 }
 
 // Animate the end effector based on the spline interpolated points
@@ -85,10 +82,10 @@ void CEndEffector::Animate(std::vector<glm::vec3> interpolated_points)
 
 	for (std::vector<int>::size_type i = 0; i != interpolated_points.size(); i++)
 	{
-		//Sleep(300);
-		//currentFrame = glfwGetTime();
-		//deltaTime = currentFrame - lastFrame;
-		//lastFrame = currentFrame;
+		Sleep(300);
+		currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		this->mPosition = interpolated_points[i];
 		std::cout << "Updated End Effector Position: (" << this->mPosition.x << "," <<
 			this->mPosition.y << "," << this->mPosition.z << ")" << std::endl;

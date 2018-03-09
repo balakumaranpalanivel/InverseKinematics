@@ -38,16 +38,16 @@ public:
 	glm::vec3 Constraint(
 		glm::vec3 point,
 		float true_length,
-		CChainLink * seg);
+		CChainLink * link);
 
 	void CalculateLinks(
 		vector<glm::vec3> joints,
 		vector<float> * lengths,
-		vector<glm::quat> * directions);
+		vector<glm::quat> * orientations);
 
 	glm::vec3 GetFirstJoint();
 	void SetFirstJoint(glm::vec3 joint);
-	void SetSegments();
+	void AssignLinks();
 	void SetConstraint(vector<glm::vec4> constraint_list);
 
 	unsigned long size;
@@ -59,7 +59,7 @@ public:
 
 private:
 	vector<glm::vec3> joints; // Joints themselves
-	vector<CChainLink> segments; // The pieces that actually get rendered
+	vector<CChainLink> mLinks; // The pieces that actually get rendered
 	float tolerance = 0.01f;
 
 };

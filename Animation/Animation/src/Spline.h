@@ -12,24 +12,18 @@
 #define D 3 // number of dimensions
 #define T 100 // number of u subintervals
 
-static GLfloat ctrlPoints[N][3] = { 
+// Key Frame Positions
+static GLfloat ctrlPoints[N][3] = 
+								{ 
 									{ 1.297, 1.669, -0.0001},
 									{ -3.5764, 1.4332, 0.3310},
 									{ -0.7525, 0.1254, 0.331},
-									{ -0.752, -2.508, 1.331}
+									{ 1.752, -2.508, 1.331}
 								};
 
 GLUnurbsObj *theNurb;
 
 int typeMode = CONFIG.SPLINE_CONFIG;
-					 // 1 = control polyline
-					 // 2 = interpolating cubic 
-					 // 3 = hermite cubic (with specific endpoint tangents)
-					 // 4 = bezier cubic (Bernstein)
-					 // 5 = bezier cubic (OpenGL)
-					 // 6 = uniform (nonrational) B-spline cubic
-					 // 7 = NURBS cubic
-					 // 8 = exit
 
 std::vector<glm::vec3> points_to_travel;
 
